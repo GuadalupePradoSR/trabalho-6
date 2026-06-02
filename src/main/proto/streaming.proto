@@ -1,0 +1,98 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "com.example.trabalho6.grpc";
+
+service StreamingGrpc {
+    rpc BuscarTodosUsuarios(BuscarTodosUsuariosRequest) returns (BuscarTodosUsuariosResponse);
+    rpc BuscarUsuario(BuscarUsuarioRequest) returns (BuscarUsuarioResponse);
+    
+    rpc BuscarTodasMusicas(BuscarTodasMusicasRequest) returns (BuscarTodasMusicasResponse);
+    rpc BuscarMusica(BuscarMusicaRequest) returns (BuscarMusicaResponse);
+    
+    rpc BuscarTodasPlaylists(BuscarTodasPlaylistsRequest) returns (BuscarTodasPlaylistsResponse);
+    rpc BuscarPlaylist(BuscarPlaylistRequest) returns (BuscarPlaylistResponse);
+    
+    rpc BuscarPlaylistsPorUsuario(BuscarPlaylistsPorUsuarioRequest) returns (BuscarPlaylistsPorUsuarioResponse);
+    rpc BuscarMusicasPorPlaylist(BuscarMusicasPorPlaylistRequest) returns (BuscarMusicasPorPlaylistResponse);
+    rpc BuscarPlaylistsPorMusica(BuscarPlaylistsPorMusicaRequest) returns (BuscarPlaylistsPorMusicaResponse);
+}
+
+message UsuarioGrpc {
+    int64 id = 1;
+    string nome = 2;
+    int32 idade = 3;
+}
+
+message MusicaGrpc {
+    int64 id = 1;
+    string nome = 2;
+    string artista = 3;
+}
+
+message PlaylistGrpc {
+    int64 id = 1;
+    string nome = 2;
+    UsuarioGrpc usuario = 3;
+    repeated MusicaGrpc musicas = 4;
+}
+
+// 1. Usuarios
+message BuscarTodosUsuariosRequest {}
+message BuscarTodosUsuariosResponse {
+    repeated UsuarioGrpc usuarios = 1;
+}
+message BuscarUsuarioRequest {
+    int64 id = 1;
+}
+message BuscarUsuarioResponse {
+    UsuarioGrpc usuario = 1;
+}
+
+// 2. Musicas
+message BuscarTodasMusicasRequest {}
+message BuscarTodasMusicasResponse {
+    repeated MusicaGrpc musicas = 1;
+}
+message BuscarMusicaRequest {
+    int64 id = 1;
+}
+message BuscarMusicaResponse {
+    MusicaGrpc musica = 1;
+}
+
+// 2. Playlists
+message BuscarTodasPlaylistsRequest {}
+message BuscarTodasPlaylistsResponse {
+    repeated PlaylistGrpc playlists = 1;
+}
+message BuscarPlaylistRequest {
+    int64 id = 1;
+}
+message BuscarPlaylistResponse {
+    PlaylistGrpc playlist = 1;
+}
+
+// 3. BuscarPlaylistsPorUsuario
+message BuscarPlaylistsPorUsuarioRequest {
+    int64 usuario_id = 1;
+}
+message BuscarPlaylistsPorUsuarioResponse {
+    repeated PlaylistGrpc playlists = 1;
+}
+
+// 4. BuscarMusicasPorPlaylist
+message BuscarMusicasPorPlaylistRequest {
+    int64 playlist_id = 1;
+}
+message BuscarMusicasPorPlaylistResponse {
+    repeated MusicaGrpc musicas = 1;
+}
+
+// 5. BuscarPlaylistsPorMusica
+message BuscarPlaylistsPorMusicaRequest {
+    int64 musica_id = 1;
+}
+message BuscarPlaylistsPorMusicaResponse {
+    repeated PlaylistGrpc playlists = 1;
+}

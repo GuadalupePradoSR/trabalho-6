@@ -1,0 +1,33 @@
+type Usuario {
+    id: ID!
+    nome: String!
+    idade: Int
+}
+
+type Musica {
+    id: ID!
+    nome: String!
+    artista: String!
+}
+
+type Playlist {
+    id: ID!
+    nome: String!
+    usuario: Usuario
+    musicas: [Musica]
+}
+
+type Query {
+    buscarTodosUsuarios: [Usuario]
+    buscarUsuario(id: ID!): Usuario
+    
+    buscarTodasMusicas: [Musica]
+    buscarMusica(id: ID!): Musica
+    
+    buscarTodasPlaylists: [Playlist]
+    buscarPlaylist(id: ID!): Playlist
+    
+    buscarPlaylistsPorUsuario(usuarioId: ID!): [Playlist]
+    buscarMusicasPorPlaylist(playlistId: ID!): [Musica]
+    buscarPlaylistsPorMusica(musicaId: ID!): [Playlist]
+}

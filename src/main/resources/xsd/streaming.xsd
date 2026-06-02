@@ -1,0 +1,170 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:tns="http://interfaces.com/streaming-ws"
+           targetNamespace="http://interfaces.com/streaming-ws"
+           elementFormDefault="qualified">
+
+    <xs:complexType name="UsuarioSoap">
+        <xs:sequence>
+            <xs:element name="id" type="xs:long"/>
+            <xs:element name="nome" type="xs:string"/>
+            <xs:element name="idade" type="xs:int" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="MusicaSoap">
+        <xs:sequence>
+            <xs:element name="id" type="xs:long"/>
+            <xs:element name="nome" type="xs:string"/>
+            <xs:element name="artista" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="PlaylistSoap">
+        <xs:sequence>
+            <xs:element name="id" type="xs:long"/>
+            <xs:element name="nome" type="xs:string"/>
+            <xs:element name="usuario" type="tns:UsuarioSoap" minOccurs="0"/>
+            <xs:element name="musicas" type="tns:MusicaSoap" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- 1. BuscarTodosUsuarios -->
+    <xs:element name="BuscarTodosUsuariosRequest">
+        <xs:complexType>
+            <xs:sequence/>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="BuscarTodosUsuariosResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="usuarios" type="tns:UsuarioSoap" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    
+    <xs:element name="BuscarUsuarioRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="id" type="xs:long"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="BuscarUsuarioResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="usuario" type="tns:UsuarioSoap" minOccurs="0"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <!-- 2. BuscarTodasMusicas -->
+    <xs:element name="BuscarTodasMusicasRequest">
+        <xs:complexType>
+            <xs:sequence/>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="BuscarTodasMusicasResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="musicas" type="tns:MusicaSoap" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    
+    <xs:element name="BuscarMusicaRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="id" type="xs:long"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="BuscarMusicaResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="musica" type="tns:MusicaSoap" minOccurs="0"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    
+    <xs:element name="BuscarTodasPlaylistsRequest">
+        <xs:complexType>
+            <xs:sequence/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="BuscarTodasPlaylistsResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="playlists" type="tns:PlaylistSoap" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="BuscarPlaylistRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="id" type="xs:long"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="BuscarPlaylistResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="playlist" type="tns:PlaylistSoap" minOccurs="0"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <!-- 3. BuscarPlaylistsPorUsuario -->
+    <xs:element name="BuscarPlaylistsPorUsuarioRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="usuarioId" type="xs:long"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="BuscarPlaylistsPorUsuarioResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="playlists" type="tns:PlaylistSoap" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <!-- 4. BuscarMusicasPorPlaylist -->
+    <xs:element name="BuscarMusicasPorPlaylistRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="playlistId" type="xs:long"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="BuscarMusicasPorPlaylistResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="musicas" type="tns:MusicaSoap" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <!-- 5. BuscarPlaylistsPorMusica -->
+    <xs:element name="BuscarPlaylistsPorMusicaRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="musicaId" type="xs:long"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="BuscarPlaylistsPorMusicaResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="playlists" type="tns:PlaylistSoap" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+</xs:schema>
