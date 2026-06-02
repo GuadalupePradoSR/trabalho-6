@@ -89,3 +89,28 @@ python python_server.py
 # - REST/GraphQL/SOAP: http://localhost:8080
 # - gRPC: localhost:9090
 ```
+
+### 2. Servidor Java (Spring Boot)
+**Arquivo:** [**`pom.xml`**](./pom.xml)
+
+A implementação Java utiliza Spring Boot para comparação de desempenho com Python.
+
+---
+
+## Scripts de Análise e Geração de Gráficos
+1. Script de Geração de Gráficos por Protocolo
+Arquivo: gerar_graficos.py
+**Arquivo:** [**`gerar_graficos.py`**](./gerar_graficos.py)
+
+3. Script de Geração de Gráficos Comparativos
+Arquivo: gerar_graficos_comparativos.py
+**Arquivo:** [**`gerar_graficos_comparativos.py`**](./gerar_graficos_comparativos.py)
+
+---
+
+## Conclusões e Descobertas
+### 1. REST é o Protocolo Mais Eficiente em Latência: REST apresenta consistentemente os menores tempos de resposta P95.
+### 2. gRPC Oferece Melhor Escalabilidade: gRPC mostra escalabilidade superior ao GraphQL e SOAP.
+### 3. SOAP Sofre com Overhead de Serialização XML: Especialmente sob carga alta.
+### 4. GraphQL Oferece Equilíbrio: Entre flexibilidade de queries e performance.
+### 5. Python vs Java - Desempenho Comparável: A escolha de protocolo é mais crítica que a linguagem.
