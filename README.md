@@ -1,9 +1,11 @@
-# Trabalho 6: Testes de Desempenho - Arquitetura de Microsserviços com Múltiplos Protocolos
+# Trabalho 6: Comparação de Tecnologias de Invocação de Serviços Remotos
 
 **Disciplina:** Computação Distribuída  
 **Professor:** Nabor Mendonça  
 **Equipe:**
+* Fernanda Ortega - 2310305
 * Guadalupe Prado - 2310300
+* Letícia Cunha - 2315055
 
 ---
 
