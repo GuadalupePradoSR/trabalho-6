@@ -82,14 +82,6 @@ Este servidor implementa os 4 protocolos em uma única aplicação:
 - **SOAP:** Via Spyne
 - **gRPC:** Via grpcio com Protocol Buffers
 
-**Execução:**
-```bash
-python python_server.py
-# Servidor rodará em:
-# - REST/GraphQL/SOAP: http://localhost:8080
-# - gRPC: localhost:9090
-```
-
 ### 2. Servidor Java (Spring Boot)
 **Arquivo:** [**`pom.xml`**](./pom.xml)
 
