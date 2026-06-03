@@ -245,8 +245,8 @@ Abaixo estão os links diretos para as pastas contendo os relatórios brutos ger
   * [Carga 100](./teste%20csv/apis%20python/100) | [Carga 300](./teste%20csv/apis%20python/300) | [Carga 600](./teste%20csv/apis%20python/600)
 
 ### Scripts Adicionais:
-* 🇯 **Script Java API's ([`python_server.py`](./python_server.py))**
-* 🅿️ **Script Python API's ([`com.example.trabalho6`](./src/main/java/com/example/trabalho6))**
+* 🇯 **Script Java API's ([`com.example.trabalho6`](./src/main/java/com/example/trabalho6))** 
+* 🅿️ **Script Python API's ([`python_server.py`](./python_server.py))**
 * 🐍 **Script Locust ([`locustfile.py`](./locustfile.py))**
 * 📈 **Scripts Python de Geração de Gráficos ([`gerar_graficos.py`](./gerar_graficos.py) | [`gerar_graficos_comparativos.py`](./gerar_graficos_comparativos.py))**
 
