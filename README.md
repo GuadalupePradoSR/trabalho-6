@@ -231,3 +231,21 @@ O experimento demonstrou de forma prática e mensurável os limites arquiteturai
 2. **gRPC é a escolha definitiva para comunicação inter-serviços:** A serialização binária com Protocol Buffers e o transporte HTTP/2 provaram-se infinitamente superiores aos demais protocolos em termos de latência e consumo de banda de rede. Mesmo no saturado servidor Python com 600 usuários, o gRPC permaneceu estável (140ms P95, 0% falhas) enquanto os protocolos HTTP clássicos entraram em colapso (2500ms P95, ~5.5% falhas).
 3. **SOAP carrega um alto custo legado:** Embora o SOAP tenha se saído surpreendentemente bem no Java devido a otimizações de baixo nível da biblioteca Spring WS, o consumo de recursos (banda 5x maior que gRPC) e a complexidade de processamento o tornam inviável para novos microsserviços escaláveis, limitando seu uso a integrações com sistemas legados corporativos.
 4. **GraphQL vs REST:** O GraphQL oferece maior flexibilidade e reduz o tráfego de dados desnecessários (*overfetching*), diminuindo o tamanho dos payloads no tráfego de rede (18KB vs 22KB do REST). No entanto, o custo de parseamento dinâmico da query na camada de aplicação exige atenção, necessitando de caches de query parseada para evitar estresse desnecessário da CPU em cenários de alta concorrência.
+
+## 📁 Acesso aos Dados Brutos (CSVs)
+
+Abaixo estão os links diretos para as pastas contendo os relatórios brutos gerados pelo Locust (Requisições e Falhas), organizados por cenário e carga:
+
+### Java (Spring Boot)
+* 📁 **Java com Banco H2**
+  * [Carga 100](./teste%20csv/apis%20java/100) | [Carga 300](./teste%20csv/apis%20java/300) | [Carga 600](./teste%20csv/apis%20java/600)
+
+### Python (FastAPI)
+* 📁 **Python em Memória**
+  * [Carga 100](./teste%20csv/apis%20python/100) | [Carga 300](./teste%20csv/apis%20python/300) | [Carga 600](./teste%20csv/apis%20python/600)
+
+### Scripts Adicionais:
+* 🐍 **Script Locust ([`locustfile.py`](./locustfile.py))**
+* 📈 **Scripts Python de Geração de Gráficos ([`gerar_graficos.py`](./gerar_graficos.py) | [`gerar_graficos_comparativos.py`](./gerar_graficos_comparativos.py))**
+
+
