@@ -1,5 +1,6 @@
 import asyncio
 import logging
+from typing import Optional
 import random
 import grpc
 import uvicorn
@@ -182,21 +183,21 @@ class Query:
         ) for p in FAKE_PLAYLISTS]
 
     @strawberry.field
-    def buscarUsuario(self, id: strawberry.ID) -> UsuarioGraphQL | None:
+    def buscarUsuario(self, id: strawberry.ID) -> Optional[UsuarioGraphQL]:
         for u in FAKE_USUARIOS:
             if str(u["id"]) == str(id):
                 return UsuarioGraphQL(**u)
         return None
 
     @strawberry.field
-    def buscarMusica(self, id: strawberry.ID) -> MusicaGraphQL | None:
+    def buscarMusica(self, id: strawberry.ID) -> Optional[MusicaGraphQL]:
         for m in FAKE_MUSICAS:
             if str(m["id"]) == str(id):
                 return MusicaGraphQL(**m)
         return None
 
     @strawberry.field
-    def buscarPlaylist(self, id: strawberry.ID) -> PlaylistGraphQL | None:
+    def buscarPlaylist(self, id: strawberry.ID) -> Optional[PlaylistGraphQL]:
         for p in FAKE_PLAYLISTS:
             if str(p["id"]) == str(id):
                 return PlaylistGraphQL(
