@@ -11,7 +11,7 @@
 
 ## 1. Descrição do Trabalho e Arquitetura do Sistema
 
-Este projeto tem como objetivo realizar uma análise comparativa aprofundada de desempenho e comportamento entre quatro das principais tecnologias de invocação de serviços remotos utilizadas na indústria: **REST**, **GraphQL**, **SOAP** e **gRPC**. 
+Este projeto tem como objetivo realizar uma análise comparativa de desempenho e comportamento entre quatro tecnologias de invocação de serviços remotos: **REST**, **GraphQL**, **SOAP** e **gRPC**. 
 
 A avaliação é feita a partir da implementação de uma mesma especificação de domínio em duas plataformas distintas: **Python** (FastAPI e ecossistema assíncrono) e **Java** (Spring Boot e ecossistema multithread da JVM).
 
