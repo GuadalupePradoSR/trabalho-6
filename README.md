@@ -68,15 +68,38 @@ O servidor está centralizado no arquivo [**`python_server.py`**](./python_serve
 5. **gRPC (grpcio):** O serviço implementa a classe `StreamingGrpcServicer` derivada de `streaming_pb2_grpc.StreamingGrpcServicer`. Na inicialização do FastAPI (`@app.on_event("startup")`), o servidor gRPC assíncrono é disparado em uma tarefa separada (`asyncio.create_task`) na porta `9090`.
 
 ### B. Servidor Java (Spring Boot)
-A implementação Java está contida em [**`pom.xml`**](./pom.xml) e no pacote `com.example.trabalho6`.
+Enquanto a configuração de build e dependências de pacotes é gerenciada pelo arquivo de configuração de ciclo de vida do Maven [**`pom.xml`**](./pom.xml), toda a lógica de negócio e as APIs da implementação Java residem no pacote principal [**`com.example.trabalho6`**](./src/main/java/com/example/trabalho6) (cujo ponto de entrada principal é a classe [**`Trabalho6Application.java`**](./src/main/java/com/example/trabalho6/Trabalho6Application.java)).
 
-1. **Persistência Real (H2 & JPA):** Ao contrário do Python que utiliza dicionários puros na memória, a aplicação Java mapeia as tabelas relacionais em memória usando JPA/Hibernate.
-2. **Carga de Dados (DataLoader):** O arquivo [**`DataLoader.java`**](./src/main/java/com/example/trabalho6/config/DataLoader.java) implementa `CommandLineRunner`. No momento em que o Spring Boot inicializa, ele gera a mesma base aleatória de dados e insere tudo no H2 usando Repositories (`saveAll`).
-3. **REST (Spring Web):** Controlado pelo [**`StreamingRestController.java`**](./src/main/java/com/example/trabalho6/controller/StreamingRestController.java), que injeta o `StreamingService` e expõe endpoints no caminho `/api/*` rodando na porta padrão 8080 (Embedded Tomcat).
-4. **GraphQL (Spring GraphQL):** Implementado no [**`StreamingGraphQLController.java`**](./src/main/java/com/example/trabalho6/controller/StreamingGraphQLController.java) mapeando queries via `@QueryMapping`. O esquema é declarado no arquivo de recursos [**`schema.graphqls`**](./src/main/resources/graphql/schema.graphqls).
-5. **SOAP (Spring WS):** Configurado em [**`WebServiceConfig.java`**](./src/main/java/com/example/trabalho6/config/WebServiceConfig.java) e exposto no [**`StreamingSoapEndpoint.java`**](./src/main/java/com/example/trabalho6/endpoint/StreamingSoapEndpoint.java). Utiliza o esquema XML declarado em [**`streaming.xsd`**](./src/main/resources/xsd/streaming.xsd), gerando as classes de envelope SOAP automaticamente via plugin JAXB.
-6. **gRPC (grpc-server-spring-boot-starter):** Controlado pelo [**`StreamingGrpcController.java`**](./src/main/java/com/example/trabalho6/controller/StreamingGrpcController.java) anotado com `@GrpcService`. Ele roda um servidor Netty escutando por padrão na porta `9090`.
+A implementação das APIs em Java está estruturada da seguinte forma:
 
+1. **Entidades de Domínio (JPA/Hibernate):** Mapeadas como entidades relacionais no pacote [**`domain`**](./src/main/java/com/example/trabalho6/domain).
+   * [**`Usuario.java`**](./src/main/java/com/example/trabalho6/domain/Usuario.java): Mapeia os dados dos usuários com as colunas correspondentes no banco relacional.
+   * [**`Musica.java`**](./src/main/java/com/example/trabalho6/domain/Musica.java): Mapeia as músicas cadastradas.
+   * [**`Playlist.java`**](./src/main/java/com/example/trabalho6/domain/Playlist.java): Mapeia a tabela de playlists, expressando a relação de muitos-para-um (`@ManyToOne`) com o dono da playlist e muitos-para-muitos (`@ManyToMany` e `@JoinTable`) com as músicas que a compõem.
+
+2. **Repositórios de Acesso a Dados (Spring Data JPA):** Localizados no pacote [**`repository`**](./src/main/java/com/example/trabalho6/repository), usam herança de `JpaRepository` para automatizar as consultas SQL no H2.
+   * [**`UsuarioRepository.java`**](./src/main/java/com/example/trabalho6/repository/UsuarioRepository.java): Manipula operações CRUD na tabela de usuários.
+   * [**`MusicaRepository.java`**](./src/main/java/com/example/trabalho6/repository/MusicaRepository.java): Manipula operações CRUD na tabela de músicas.
+   * [**`PlaylistRepository.java`**](./src/main/java/com/example/trabalho6/repository/PlaylistRepository.java): Contém métodos customizados baseados em convenção de nomeação para encontrar playlists associadas a um ID de usuário (`findByUsuarioId`) ou a um ID de música (`findByMusicasId`).
+
+3. **Camada de Serviço (Regras de Negócio):** 
+   * [**`StreamingService.java`**](./src/main/java/com/example/trabalho6/service/StreamingService.java): Encapsula todas as operações do sistema, centralizando o acesso aos repositórios JPA sob transações de leitura e escrita (`@Transactional`).
+
+4. **Carga e Inicialização do Banco (H2):** 
+   * [**`DataLoader.java`**](./src/main/java/com/example/trabalho6/config/DataLoader.java): Classe de configuração anotada com `@Configuration` que implementa um runner do tipo `CommandLineRunner`. Ao iniciar o servidor Spring Boot, se o banco relacional in-memory H2 estiver vazio, ele gera os mesmos 500 usuários, 1000 músicas e playlists com semente aleatória `seed = 42` e os salva em massa no banco.
+
+5. **REST API (Spring Web):**
+   * [**`StreamingRestController.java`**](./src/main/java/com/example/trabalho6/controller/StreamingRestController.java): Controla todas as rotas HTTP REST em `/api/*`. Utiliza as anotações do Spring MVC como `@RestController`, `@GetMapping`, `@PostMapping` e `@PathVariable`, respondendo na porta `8080` rodando sobre o Tomcat embarcado.
+
+6. **GraphQL API (Spring GraphQL):**
+   * [**`StreamingGraphQLController.java`**](./src/main/java/com/example/trabalho6/controller/StreamingGraphQLController.java): Gerencia as consultas GraphQL através de métodos anotados com `@QueryMapping` e `@Argument`. A resolução de tipos e campos mapeia-se automaticamente com o esquema em formato SDL declarado em [**`schema.graphqls`**](./src/main/resources/graphql/schema.graphqls).
+
+7. **SOAP API (Spring Web Services):**
+   * [**`WebServiceConfig.java`**](./src/main/java/com/example/trabalho6/config/WebServiceConfig.java): Registra a servlet do SOAP `MessageDispatcherServlet` e mapeia para a URL `/ws/*`, gerando dinamicamente o WSDL a partir do arquivo de definição [**`streaming.xsd`**](.src/main/resources/xsd/streaming.xsd).
+   * [**`StreamingSoapEndpoint.java`**](./src/main/java/com/example/trabalho6/endpoint/StreamingSoapEndpoint.java): Classe anotada com `@Endpoint` que intercepta requisições SOAP através de `@PayloadRoot` e `@RequestPayload`, retornando objetos encapsulados em envelopes XML no formato mapeado pelo JAXB.
+
+8. **gRPC API (grpc-server-spring-boot-starter):**
+   * [**`StreamingGrpcController.java`**](./src/main/java/com/example/trabalho6/controller/StreamingGrpcController.java): Anotado com `@GrpcService`, estende a classe abstrata gerada pelo compilador de Protocol Buffers (`StreamingGrpcGrpc.StreamingGrpcImplBase`). Ele subscreve os métodos síncronos RPC (como `buscarTodosUsuarios`) e envia os dados via `StreamObserver` rodando sobre o servidor Netty na porta `9090`.
 ---
 
 ## 4. Teste de Carga e Comportamento do Usuário
