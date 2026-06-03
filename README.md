@@ -21,38 +21,6 @@ O domínio simula a estrutura simplificada de uma plataforma de streaming de mú
 2. **Músicas (`Musica`):** Contêm `id`, `nome` e `artista`.
 3. **Playlists (`Playlist`):** Contêm `id`, `nome`, uma associação do tipo muitos-para-um (`ManyToOne`) com o `Usuario` dono, e uma relação de muitos-para-muitos (`ManyToMany`) com as músicas que a compõem.
 
-O diagrama de classes simplificado do domínio é apresentado a seguir:
-
-```
-              +-------------------+             +------------------+
-              |     Usuarios      |             |     Musicas      |
-              +-------------------+             +------------------+
-                        |                                 |
-                        | 0..*                            | 0..*
-                        v                                 v
-              +-------------------+   1..1      +------------------+
-              |      Usuario      |------------>|    Playlists     |
-              | - id: Long        |             +------------------+
-              | - nome: String    |                       |
-              | - idade: Integer  |                       | 0..*
-              +-------------------+                       v
-                                                +------------------+
-                                                |     Playlist     |
-                                                | - id: Long       |
-                                                | - nome: String   |
-                                                | - musicas: Set   |
-                                                +------------------+
-                                                          | 0..*
-                                                          |
-                                                          v
-                                                +------------------+
-                                                |      Musica      |
-                                                | - id: Long       |
-                                                | - nome: String   |
-                                                | - artista: String|
-                                                +------------------+
-```
-
 ### Operações Avaliadas
 As APIs de ambos os servidores foram configuradas para expor as seguintes operações de consulta e gerenciamento:
 * Listar todos os usuários, músicas ou playlists.
