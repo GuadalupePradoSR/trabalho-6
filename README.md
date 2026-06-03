@@ -53,7 +53,7 @@ O projeto emprega uma variedade de frameworks e bibliotecas modernas para implem
 
 ## 3. Configuração dos Servidores e APIs
 
-Para garantir que a comparação fosse justa, ambos os servidores foram populados com a **mesma semente aleatória (`seed = 42`)** e a mesma quantidade de registros no banco de dados / memória:
+Ambos os servidores foram populados com a **mesma semente aleatória (`seed = 42`)** e a mesma quantidade de registros no banco de dados / memória:
 * **500 Usuários** cadastrados.
 * **1000 Músicas** cadastradas.
 * **Playlists aleatórias** (entre 1 e 3 por usuário, contendo de 5 a 15 músicas aleatórias cada).
@@ -88,7 +88,7 @@ O arquivo [**`locustfile.py`**](./locustfile.py) simula o comportamento dos usu�
 
 ### Comportamento do Usuário Simulado
 A classe `ApiLoadTestUser` define o seguinte comportamento:
-* **Tempo de Espera (*Pacing*):** Após completar uma requisição, cada usuário aguarda um intervalo de tempo aleatório entre **1 e 2 segundos** (`wait_time = between(1, 2)`) antes de disparar a próxima tarefa. Isso simula o comportamento real de humanos interagindo com um aplicativo.
+* **Tempo de Espera (*Pacing*):** Após completar uma requisição, cada usuário aguarda um intervalo de tempo aleatório entre **1 e 2 segundos** (`wait_time = between(1, 2)`) antes de disparar a próxima tarefa.
 * **Distribuição de Tarefas:** Cada usuário realiza chamadas para as quatro tecnologias em formato round-robin/aleatório com pesos iguais (anotações `@task` de mesmo peso):
   1. **REST:** Faz um `GET` no endpoint `/api/usuarios`.
   2. **GraphQL:** Faz um `POST` no endpoint `/graphql` solicitando a lista de usuários: `query { buscarTodosUsuarios { id nome } }`.
@@ -155,7 +155,7 @@ Com 300 usuários concorrentes, os servidores começam a ser pressionados.
 **Comparativo Geral (300 Usuários):**  
 ![Comparação Geral P95 - 300 Usuários](./graficos_desempenho/graficos%20geral/Comparacao_P95_300_usuarios.png)
 
-*Análise:* O servidor Python demonstra os primeiros sinais de saturação de CPU. Suas latências saltam de cerca de 25ms para mais de 250ms em protocolos HTTP. O gRPC em Python se mantém em 110ms. No Java, ocorre o efeito inverso: devido ao aquecimento da JVM (*JIT compilation*), a latência P95 cai ou se mantém extremamente baixa (gRPC vai a 1ms, REST a 3ms, SOAP a 7ms).
+*Análise:* O servidor Python demonstra os primeiros sinais de saturação de CPU. Suas latências saltam de cerca de 25ms para mais de 250ms em protocolos HTTP. O gRPC em Python se mantém em 110ms. No Java, ocorre o efeito inverso: devido ao aquecimento da JVM (*JIT compilation*), a latência P95 cai e se mantém extremamente baixa (gRPC vai a 1ms, REST a 3ms, SOAP a 7ms).
 
 ---
 
@@ -172,7 +172,7 @@ Cenário de estresse extremo que evidencia as diferenças arquiteturais.
 **Comparativo Geral (600 Usuários):**  
 ![Comparação Geral P95 - 600 Usuários](./graficos_desempenho/graficos%20geral/Comparacao_P95_600_usuarios.png)
 
-*Análise:* Em Python, a concorrência de 600 usuários causa um colapso de desempenho nas APIs HTTP (REST, GraphQL e SOAP), cujas latências P95 atingem **2500ms - 2600ms**, acompanhadas por taxas de erro próximas de **5%** (erros de timeout e conexão). O gRPC em Python é o único que sobrevive de forma estável (P95 de 140ms e 0% de falhas). Em Java, os tempos permanecem assustadoramente baixos e estáveis: **gRPC (1ms), REST (2ms), GraphQL (3ms) e SOAP (6ms)**, sem nenhuma falha registrada.
+*Análise:* Em Python, a concorrência de 600 usuários causa um colapso de desempenho nas APIs HTTP (REST, GraphQL e SOAP), cujas latências P95 atingem **2500ms - 2600ms**, acompanhadas por taxas de erro próximas de **5%** (erros de timeout e conexão). O gRPC em Python é o único que sobrevive de forma estável (P95 de 140ms e 0% de falhas). Em Java, os tempos permanecem baixos e estáveis: **gRPC (1ms), REST (2ms), GraphQL (3ms) e SOAP (6ms)**, sem nenhuma falha registrada.
 
 ---
 
@@ -186,7 +186,7 @@ A superioridade do Java sobre o Python em todos os cenários avaliados não se d
 
 ### 2. Otimização de Código Dinâmica (Compilação JIT)
 * O Python executa código interpretado de alto nível. Cada loop sobre a coleção de usuários e cada conversão de tipo precisa ser avaliada dinamicamente a cada requisição.
-* A JVM (Java Virtual Machine) emprega a compilação **JIT (Just-In-Time)**. Quando o servidor inicializa, o código roda de forma interpretada. Porém, à medida que os primeiros testes com 100 usuários são disparados, a JVM detecta quais métodos são chamados repetidamente ("hotspots") e os compila dinamicamente para código de máquina nativo e altamente otimizado. É por isso que, curiosamente, os tempos do Java para 300 e 600 usuários foram **ainda melhores** do que o cenário inicial de 100 usuários.
+* A JVM (Java Virtual Machine) emprega a compilação **JIT (Just-In-Time)**. Quando o servidor inicializa, o código roda de forma interpretada. Porém, à medida que os primeiros testes com 100 usuários são disparados, a JVM detecta quais métodos são chamados repetidamente ("hotspots") e os compila dinamicamente para código de máquina nativo e altamente otimizado. É por isso que os tempos do Java para 300 e 600 usuários foram **ainda melhores** do que o cenário inicial de 100 usuários.
 
 ### 3. Acesso a Dados: Banco de Dados H2 vs Busca Linear em Dicionários
 * **Python:** O servidor Python realiza buscas em memória filtrando listas de dicionários lineares (`[p for p in FAKE_PLAYLISTS if p["usuario"]["id"] == usuario_id]`). Embora pareça rápido, essa busca linear em nível de interpretador consome muitos ciclos de CPU do único thread disponível sob alta concorrência.
@@ -194,7 +194,7 @@ A superioridade do Java sobre o Python em todos os cenários avaliados não se d
 
 ### 4. Eficiência na Serialização (REST vs GraphQL vs SOAP vs gRPC)
 A eficiência do protocolo impacta diretamente o uso de CPU e banda de rede de cada servidor:
-* **gRPC (Protocol Buffers):** Utiliza codificação binária estruturada extremamente eficiente. A conversão de dados não envolve manipulação pesada de strings (como JSON ou XML) e o gRPC é executado no Python utilizando bibliotecas altamente otimizadas escritas em C/C++ (`grpcio`), explicando por que o gRPC em Python se saiu muito melhor do que REST/GraphQL/SOAP. Em Java, o gRPC roda sobre o Netty, uma biblioteca assíncrona de rede baseada em eventos altamente otimizada, alcançando latências P95 irrisórias de **1ms**.
+* **gRPC (Protocol Buffers):** Utiliza codificação binária estruturada extremamente eficiente. A conversão de dados não envolve manipulação pesada de strings (como JSON ou XML) e o gRPC é executado no Python utilizando bibliotecas altamente otimizadas escritas em C/C++ (`grpcio`), explicando por que o gRPC em Python se saiu muito melhor do que REST/GraphQL/SOAP. Em Java, o gRPC roda sobre o Netty, uma biblioteca assíncrona de rede baseada em eventos altamente otimizada, alcançando latências P95 de **1ms**.
 * **GraphQL:** Adiciona um overhead de parseamento e validação de query dinamicamente em cada requisição. Em Python, isso agrava o gargalo da CPU.
 * **SOAP:** Utiliza XML, que possui tags redundantes e verbosas (payload médio de 54 KB, quase 5 vezes maior que o gRPC). O processamento de parseamento e validação contra o XSD é uma tarefa de alta demanda de processamento de texto. Em Python (Spyne), esse processamento sobrecarregou drasticamente a thread principal. Em Java (Spring WS + JAXB), a compilação estática das classes XML e os parsers baseados em SAX nativos mitigaram totalmente esse custo.
 
@@ -204,7 +204,7 @@ A eficiência do protocolo impacta diretamente o uso de CPU e banda de rede de c
 
 O experimento demonstrou de forma prática e mensurável os limites arquiteturais de diferentes abordagens tecnológicas e linguagens sob estresse concorrente:
 
-1. **A arquitetura da linguagem determina o limite de escala horizontal:** Para microsserviços sob alta concorrência concorrentes e intensivos em CPU/Serialização, o modelo multithread real da JVM (Java) supera dramaticamente o loop assíncrono de thread única do Python devido ao bloqueio da CPU por tarefas síncronas de serialização e restrições do GIL. O Python FastAPI brilha pela velocidade de desenvolvimento e excelente suporte I/O assíncrono, mas exige a execução de múltiplos processos (utilizando Gunicorn com múltiplos workers Uvicorn) para poder escalar paralelamente em máquinas multi-core.
-2. **gRPC é a escolha definitiva para comunicação inter-serviços (East-West):** A serialização binária com Protocol Buffers e o transporte HTTP/2 provaram-se infinitamente superiores aos demais protocolos em termos de latência e consumo de banda de rede. Mesmo no saturado servidor Python com 600 usuários, o gRPC permaneceu estável (140ms P95, 0% falhas) enquanto os protocolos HTTP clássicos entraram em colapso completo (2500ms P95, ~5.5% falhas).
+1. **A arquitetura da linguagem determina o limite de escala horizontal:** Para microsserviços sob alta concorrência concorrentes e intensivos em CPU/Serialização, o modelo multithread real da JVM (Java) supera o loop assíncrono de thread única do Python devido ao bloqueio da CPU por tarefas síncronas de serialização e restrições do GIL. O Python FastAPI brilha pela velocidade de desenvolvimento e excelente suporte I/O assíncrono, mas exige a execução de múltiplos processos (utilizando Gunicorn com múltiplos workers Uvicorn) para poder escalar paralelamente em máquinas multi-core.
+2. **gRPC é a escolha definitiva para comunicação inter-serviços:** A serialização binária com Protocol Buffers e o transporte HTTP/2 provaram-se infinitamente superiores aos demais protocolos em termos de latência e consumo de banda de rede. Mesmo no saturado servidor Python com 600 usuários, o gRPC permaneceu estável (140ms P95, 0% falhas) enquanto os protocolos HTTP clássicos entraram em colapso (2500ms P95, ~5.5% falhas).
 3. **SOAP carrega um alto custo legado:** Embora o SOAP tenha se saído surpreendentemente bem no Java devido a otimizações de baixo nível da biblioteca Spring WS, o consumo de recursos (banda 5x maior que gRPC) e a complexidade de processamento o tornam inviável para novos microsserviços escaláveis, limitando seu uso a integrações com sistemas legados corporativos.
 4. **GraphQL vs REST:** O GraphQL oferece maior flexibilidade e reduz o tráfego de dados desnecessários (*overfetching*), diminuindo o tamanho dos payloads no tráfego de rede (18KB vs 22KB do REST). No entanto, o custo de parseamento dinâmico da query na camada de aplicação exige atenção, necessitando de caches de query parseada para evitar estresse desnecessário da CPU em cenários de alta concorrência.
