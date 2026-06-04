@@ -16,6 +16,21 @@ service StreamingGrpc {
     rpc BuscarPlaylistsPorUsuario(BuscarPlaylistsPorUsuarioRequest) returns (BuscarPlaylistsPorUsuarioResponse);
     rpc BuscarMusicasPorPlaylist(BuscarMusicasPorPlaylistRequest) returns (BuscarMusicasPorPlaylistResponse);
     rpc BuscarPlaylistsPorMusica(BuscarPlaylistsPorMusicaRequest) returns (BuscarPlaylistsPorMusicaResponse);
+
+    // CRUD Usuarios
+    rpc CriarUsuario(CriarUsuarioRequest) returns (UsuarioGrpc);
+    rpc AtualizarUsuario(AtualizarUsuarioRequest) returns (UsuarioGrpc);
+    rpc DeletarUsuario(DeletarUsuarioRequest) returns (DeletarResponse);
+
+    // CRUD Musicas
+    rpc CriarMusica(CriarMusicaRequest) returns (MusicaGrpc);
+    rpc AtualizarMusica(AtualizarMusicaRequest) returns (MusicaGrpc);
+    rpc DeletarMusica(DeletarMusicaRequest) returns (DeletarResponse);
+
+    // CRUD Playlists
+    rpc CriarPlaylist(CriarPlaylistRequest) returns (PlaylistGrpc);
+    rpc AtualizarPlaylist(AtualizarPlaylistRequest) returns (PlaylistGrpc);
+    rpc DeletarPlaylist(DeletarPlaylistRequest) returns (DeletarResponse);
 }
 
 message UsuarioGrpc {
@@ -95,4 +110,51 @@ message BuscarPlaylistsPorMusicaRequest {
 }
 message BuscarPlaylistsPorMusicaResponse {
     repeated PlaylistGrpc playlists = 1;
+}
+
+// CRUD Messages
+message CriarUsuarioRequest {
+    string nome = 1;
+    int32 idade = 2;
+}
+message AtualizarUsuarioRequest {
+    int64 id = 1;
+    string nome = 2;
+    int32 idade = 3;
+}
+message DeletarUsuarioRequest {
+    int64 id = 1;
+}
+
+message CriarMusicaRequest {
+    string nome = 1;
+    string artista = 2;
+}
+message AtualizarMusicaRequest {
+    int64 id = 1;
+    string nome = 2;
+    string artista = 3;
+}
+message DeletarMusicaRequest {
+    int64 id = 1;
+}
+
+message CriarPlaylistRequest {
+    string nome = 1;
+    int64 usuario_id = 2;
+    repeated int64 musicas_ids = 3;
+}
+message AtualizarPlaylistRequest {
+    int64 id = 1;
+    string nome = 2;
+    int64 usuario_id = 3;
+    repeated int64 musicas_ids = 4;
+}
+message DeletarPlaylistRequest {
+    int64 id = 1;
+}
+
+message DeletarResponse {
+    bool success = 1;
+    string message = 2;
 }

@@ -9,6 +9,7 @@ import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
 
 import java.util.List;
+import java.util.Set;
 
 @GrpcService
 public class StreamingGrpcController extends StreamingGrpcGrpc.StreamingGrpcImplBase {
@@ -127,6 +128,117 @@ public class StreamingGrpcController extends StreamingGrpcGrpc.StreamingGrpcImpl
         }
 
         responseObserver.onNext(responseBuilder.build());
+        responseObserver.onCompleted();
+    }
+
+    @Override
+    public void criarUsuario(CriarUsuarioRequest request, StreamObserver<UsuarioGrpc> responseObserver) {
+        Usuario u = new Usuario();
+        u.setNome(request.getNome());
+        u.setIdade(request.getIdade());
+        u = streamingService.salvarUsuario(u);
+        responseObserver.onNext(converterUsuario(u));
+        responseObserver.onCompleted();
+    }
+
+    @Override
+    public void atualizarUsuario(AtualizarUsuarioRequest request, StreamObserver<UsuarioGrpc> responseObserver) {
+        Usuario u = streamingService.buscarUsuario(request.getId());
+        if (u != null) {
+            if (!request.getNome().isEmpty()) u.setNome(request.getNome());
+            if (request.getIdade() > 0) u.setIdade(request.getIdade());
+            u = streamingService.salvarUsuario(u);
+            responseObserver.onNext(converterUsuario(u));
+        } else {
+            responseObserver.onNext(UsuarioGrpc.newBuilder().build());
+        }
+        responseObserver.onCompleted();
+    }
+
+    @Override
+    public void deletarUsuario(DeletarUsuarioRequest request, StreamObserver<DeletarResponse> responseObserver) {
+        streamingService.removerUsuario(request.getId());
+        responseObserver.onNext(DeletarResponse.newBuilder().setSuccess(true).setMessage("Usuário deletado").build());
+        responseObserver.onCompleted();
+    }
+
+    @Override
+    public void criarMusica(CriarMusicaRequest request, StreamObserver<MusicaGrpc> responseObserver) {
+        Musica m = new Musica();
+        m.setNome(request.getNome());
+        m.setArtista(request.getArtista());
+        m = streamingService.salvarMusica(m);
+        responseObserver.onNext(converterMusica(m));
+        responseObserver.onCompleted();
+    }
+
+    @Override
+    public void atualizarMusica(AtualizarMusicaRequest request, StreamObserver<MusicaGrpc> responseObserver) {
+        Musica m = streamingService.buscarMusica(request.getId());
+        if (m != null) {
+            if (!request.getNome().isEmpty()) m.setNome(request.getNome());
+            if (!request.getArtista().isEmpty()) m.setArtista(request.getArtista());
+            m = streamingService.salvarMusica(m);
+            responseObserver.onNext(converterMusica(m));
+        } else {
+            responseObserver.onNext(MusicaGrpc.newBuilder().build());
+        }
+        responseObserver.onCompleted();
+    }
+
+    @Override
+    public void deletarMusica(DeletarMusicaRequest request, StreamObserver<DeletarResponse> responseObserver) {
+        streamingService.removerMusica(request.getId());
+        responseObserver.onNext(DeletarResponse.newBuilder().setSuccess(true).setMessage("Música deletada").build());
+        responseObserver.onCompleted();
+    }
+
+    @Override
+    public void criarPlaylist(CriarPlaylistRequest request, StreamObserver<PlaylistGrpc> responseObserver) {
+        Playlist p = new Playlist();
+        p.setNome(request.getNome());
+        Usuario u = streamingService.buscarUsuario(request.getUsuarioId());
+        p.setUsuario(u);
+        Set<Musica> ms = new java.util.HashSet<>();
+        for (Long mid : request.getMusicasIdsList()) {
+            Musica m = streamingService.buscarMusica(mid);
+            if (m != null) ms.add(m);
+        }
+        p.setMusicas(ms);
+        p = streamingService.salvarPlaylist(p);
+        responseObserver.onNext(converterPlaylist(p));
+        responseObserver.onCompleted();
+    }
+
+    @Override
+    public void atualizarPlaylist(AtualizarPlaylistRequest request, StreamObserver<PlaylistGrpc> responseObserver) {
+        Playlist p = streamingService.buscarPlaylist(request.getId());
+        if (p != null) {
+            if (!request.getNome().isEmpty()) p.setNome(request.getNome());
+            if (request.getUsuarioId() > 0) {
+                Usuario u = streamingService.buscarUsuario(request.getUsuarioId());
+                p.setUsuario(u);
+            }
+            if (request.getMusicasIdsList() != null && !request.getMusicasIdsList().isEmpty()) {
+                Set<Musica> ms = new java.util.HashSet<>();
+                for (Long mid : request.getMusicasIdsList()) {
+                    Musica m = streamingService.buscarMusica(mid);
+                    if (m != null) ms.add(m);
+                }
+                p.setMusicas(ms);
+            }
+            p = streamingService.salvarPlaylist(p);
+            responseObserver.onNext(converterPlaylist(p));
+        } else {
+            responseObserver.onNext(PlaylistGrpc.newBuilder().build());
+        }
+        responseObserver.onCompleted();
+    }
+
+    @Override
+    public void deletarPlaylist(DeletarPlaylistRequest request, StreamObserver<DeletarResponse> responseObserver) {
+        streamingService.removerPlaylist(request.getId());
+        responseObserver.onNext(DeletarResponse.newBuilder().setSuccess(true).setMessage("Playlist deletada").build());
         responseObserver.onCompleted();
     }
 

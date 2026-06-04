@@ -11,6 +11,7 @@ import org.springframework.ws.server.endpoint.annotation.RequestPayload;
 import org.springframework.ws.server.endpoint.annotation.ResponsePayload;
 
 import java.util.List;
+import java.util.Set;
 
 @Endpoint
 public class StreamingSoapEndpoint {
@@ -118,6 +119,137 @@ public class StreamingSoapEndpoint {
         if (musica != null) {
             response.setMusica(converterMusica(musica));
         }
+        return response;
+    }
+
+    // CRUD Usuarios
+    @PayloadRoot(namespace = NAMESPACE_URI, localPart = "CriarUsuarioRequest")
+    @ResponsePayload
+    public CriarUsuarioResponse criarUsuario(@RequestPayload CriarUsuarioRequest request) {
+        Usuario u = new Usuario();
+        u.setNome(request.getNome());
+        u.setIdade(request.getIdade());
+        u = streamingService.salvarUsuario(u);
+        CriarUsuarioResponse response = new CriarUsuarioResponse();
+        response.setUsuario(converterUsuario(u));
+        return response;
+    }
+
+    @PayloadRoot(namespace = NAMESPACE_URI, localPart = "AtualizarUsuarioRequest")
+    @ResponsePayload
+    public AtualizarUsuarioResponse atualizarUsuario(@RequestPayload AtualizarUsuarioRequest request) {
+        Usuario u = streamingService.buscarUsuario(request.getId());
+        AtualizarUsuarioResponse response = new AtualizarUsuarioResponse();
+        if (u != null) {
+            if (request.getNome() != null) u.setNome(request.getNome());
+            if (request.getIdade() != null) u.setIdade(request.getIdade());
+            u = streamingService.salvarUsuario(u);
+            response.setUsuario(converterUsuario(u));
+        }
+        return response;
+    }
+
+    @PayloadRoot(namespace = NAMESPACE_URI, localPart = "DeletarUsuarioRequest")
+    @ResponsePayload
+    public DeletarUsuarioResponse deletarUsuario(@RequestPayload DeletarUsuarioRequest request) {
+        streamingService.removerUsuario(request.getId());
+        DeletarUsuarioResponse response = new DeletarUsuarioResponse();
+        response.setSuccess(true);
+        response.setMessage("Usuário deletado");
+        return response;
+    }
+
+    // CRUD Musicas
+    @PayloadRoot(namespace = NAMESPACE_URI, localPart = "CriarMusicaRequest")
+    @ResponsePayload
+    public CriarMusicaResponse criarMusica(@RequestPayload CriarMusicaRequest request) {
+        Musica m = new Musica();
+        m.setNome(request.getNome());
+        m.setArtista(request.getArtista());
+        m = streamingService.salvarMusica(m);
+        CriarMusicaResponse response = new CriarMusicaResponse();
+        response.setMusica(converterMusica(m));
+        return response;
+    }
+
+    @PayloadRoot(namespace = NAMESPACE_URI, localPart = "AtualizarMusicaRequest")
+    @ResponsePayload
+    public AtualizarMusicaResponse atualizarMusica(@RequestPayload AtualizarMusicaRequest request) {
+        Musica m = streamingService.buscarMusica(request.getId());
+        AtualizarMusicaResponse response = new AtualizarMusicaResponse();
+        if (m != null) {
+            if (request.getNome() != null) m.setNome(request.getNome());
+            if (request.getArtista() != null) m.setArtista(request.getArtista());
+            m = streamingService.salvarMusica(m);
+            response.setMusica(converterMusica(m));
+        }
+        return response;
+    }
+
+    @PayloadRoot(namespace = NAMESPACE_URI, localPart = "DeletarMusicaRequest")
+    @ResponsePayload
+    public DeletarMusicaResponse deletarMusica(@RequestPayload DeletarMusicaRequest request) {
+        streamingService.removerMusica(request.getId());
+        DeletarMusicaResponse response = new DeletarMusicaResponse();
+        response.setSuccess(true);
+        response.setMessage("Música deletada");
+        return response;
+    }
+
+    // CRUD Playlists
+    @PayloadRoot(namespace = NAMESPACE_URI, localPart = "CriarPlaylistRequest")
+    @ResponsePayload
+    public CriarPlaylistResponse criarPlaylist(@RequestPayload CriarPlaylistRequest request) {
+        Playlist p = new Playlist();
+        p.setNome(request.getNome());
+        Usuario u = streamingService.buscarUsuario(request.getUsuarioId());
+        p.setUsuario(u);
+        java.util.Set<Musica> ms = new java.util.HashSet<>();
+        if (request.getMusicasIds() != null) {
+            for (Long mid : request.getMusicasIds()) {
+                Musica m = streamingService.buscarMusica(mid);
+                if (m != null) ms.add(m);
+            }
+        }
+        p.setMusicas(ms);
+        p = streamingService.salvarPlaylist(p);
+        CriarPlaylistResponse response = new CriarPlaylistResponse();
+        response.setPlaylist(converterPlaylist(p));
+        return response;
+    }
+
+    @PayloadRoot(namespace = NAMESPACE_URI, localPart = "AtualizarPlaylistRequest")
+    @ResponsePayload
+    public AtualizarPlaylistResponse atualizarPlaylist(@RequestPayload AtualizarPlaylistRequest request) {
+        Playlist p = streamingService.buscarPlaylist(request.getId());
+        AtualizarPlaylistResponse response = new AtualizarPlaylistResponse();
+        if (p != null) {
+            if (request.getNome() != null) p.setNome(request.getNome());
+            if (request.getUsuarioId() != null) {
+                Usuario u = streamingService.buscarUsuario(request.getUsuarioId());
+                p.setUsuario(u);
+            }
+            if (request.getMusicasIds() != null && !request.getMusicasIds().isEmpty()) {
+                java.util.Set<Musica> ms = new java.util.HashSet<>();
+                for (Long mid : request.getMusicasIds()) {
+                    Musica m = streamingService.buscarMusica(mid);
+                    if (m != null) ms.add(m);
+                }
+                p.setMusicas(ms);
+            }
+            p = streamingService.salvarPlaylist(p);
+            response.setPlaylist(converterPlaylist(p));
+        }
+        return response;
+    }
+
+    @PayloadRoot(namespace = NAMESPACE_URI, localPart = "DeletarPlaylistRequest")
+    @ResponsePayload
+    public DeletarPlaylistResponse deletarPlaylist(@RequestPayload DeletarPlaylistRequest request) {
+        streamingService.removerPlaylist(request.getId());
+        DeletarPlaylistResponse response = new DeletarPlaylistResponse();
+        response.setSuccess(true);
+        response.setMessage("Playlist deletada");
         return response;
     }
 

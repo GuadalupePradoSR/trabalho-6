@@ -31,3 +31,17 @@ type Query {
     buscarMusicasPorPlaylist(playlistId: ID!): [Musica]
     buscarPlaylistsPorMusica(musicaId: ID!): [Playlist]
 }
+
+type Mutation {
+    criarUsuario(nome: String!, idade: Int): Usuario
+    atualizarUsuario(id: ID!, nome: String, idade: Int): Usuario
+    deletarUsuario(id: ID!): Boolean
+
+    criarMusica(nome: String!, artista: String!): Musica
+    atualizarMusica(id: ID!, nome: String, artista: String): Musica
+    deletarMusica(id: ID!): Boolean
+
+    criarPlaylist(nome: String!, usuarioId: ID!, musicasIds: [ID!]!): Playlist
+    atualizarPlaylist(id: ID!, nome: String, usuarioId: ID, musicasIds: [ID!]): Playlist
+    deletarPlaylist(id: ID!): Boolean
+}

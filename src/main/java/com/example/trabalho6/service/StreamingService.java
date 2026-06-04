@@ -57,6 +57,10 @@ public class StreamingService {
 
     @Transactional
     public void removerUsuario(Long id) {
+        List<Playlist> playlists = playlistRepository.findByUsuarioId(id);
+        if (!playlists.isEmpty()) {
+            playlistRepository.deleteAll(playlists);
+        }
         usuarioRepository.deleteById(id);
     }
 
@@ -72,6 +76,13 @@ public class StreamingService {
 
     @Transactional
     public void removerMusica(Long id) {
+        List<Playlist> playlists = playlistRepository.findByMusicasId(id);
+        if (!playlists.isEmpty()) {
+            for (Playlist p : playlists) {
+                p.getMusicas().removeIf(m -> m.getId().equals(id));
+            }
+            playlistRepository.saveAll(playlists);
+        }
         musicaRepository.deleteById(id);
     }
 

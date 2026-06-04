@@ -143,4 +143,58 @@
 		</plugins>
 	</build>
 
+	<profiles>
+		<!-- macOS Apple Silicon -->
+		<profile>
+			<id>mac-aarch_64</id>
+			<activation>
+				<os>
+					<family>mac</family>
+					<arch>aarch64</arch>
+				</os>
+			</activation>
+			<properties>
+				<os.detected.classifier>osx-aarch_64</os.detected.classifier>
+			</properties>
+		</profile>
+		<!-- macOS Intel -->
+		<profile>
+			<id>mac-x86_64</id>
+			<activation>
+				<os>
+					<family>mac</family>
+					<arch>x86_64</arch>
+				</os>
+			</activation>
+			<properties>
+				<os.detected.classifier>osx-x86_64</os.detected.classifier>
+			</properties>
+		</profile>
+		<!-- Windows x64 -->
+		<profile>
+			<id>windows-x86_64</id>
+			<activation>
+				<os>
+					<family>windows</family>
+					<arch>amd64</arch>
+				</os>
+			</activation>
+			<properties>
+				<os.detected.classifier>windows-x86_64</os.detected.classifier>
+			</properties>
+		</profile>
+		<!-- Linux x64 -->
+		<profile>
+			<id>linux-x86_64</id>
+			<activation>
+				<os>
+					<family>unix</family>
+					<arch>amd64</arch>
+				</os>
+			</activation>
+			<properties>
+				<os.detected.classifier>linux-x86_64</os.detected.classifier>
+			</properties>
+		</profile>
+	</profiles>
 </project>
