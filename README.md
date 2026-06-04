@@ -22,12 +22,15 @@ O domínio simula a estrutura simplificada de uma plataforma de streaming de mú
 3. **Playlists (`Playlist`):** Contêm `id`, `nome`, uma associação do tipo muitos-para-um (`ManyToOne`) com o `Usuario` dono, e uma relação de muitos-para-muitos (`ManyToMany`) com as músicas que a compõem.
 
 ### Operações Avaliadas
-As APIs de ambos os servidores foram configuradas para expor as seguintes operações de consulta e gerenciamento:
-* Listar todos os usuários, músicas ou playlists.
-* Buscar um usuário, música ou playlist por seu identificador único (`id`).
-* Listar as playlists de um determinado usuário.
-* Listar as músicas de uma determinada playlist.
-* Listar todas as playlists que contêm uma determinada música.
+As APIs de ambos os servidores foram configuradas para expor as seguintes operações de **CRUD completo (Create, Read, Update, Delete)** e consultas avançadas:
+
+* **Gerenciamento Completo:** Criar, Atualizar e Deletar Usuários, Músicas e Playlists em todas as tecnologias (REST, GraphQL, SOAP e gRPC).
+* **Consultas e Listagens:**
+  * Listar todos os usuários, músicas ou playlists.
+  * Buscar um usuário, música ou playlist por seu identificador único (`id`).
+  * Listar as playlists de um determinado usuário.
+  * Listar as músicas de uma determinada playlist.
+  * Listar todas as playlists que contêm uma determinada música.
 
 ---
 
